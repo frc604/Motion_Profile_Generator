@@ -655,7 +655,6 @@ public class ProfileGenerator
     {
         Config config = new Config( fitMethod, Config.SAMPLES_HIGH, timeStep, velocity, acceleration, jerk );
         source = Pathfinder.generate( POINTS.toArray(new Waypoint[1]), config );
-
         if (driveBase == DriveBase.SWERVE) 
         {
             SwerveModifier swerve = new SwerveModifier(source);
@@ -671,7 +670,7 @@ public class ProfileGenerator
         else  // By default, treat everything as tank drive.
         {
             TankModifier tank = new TankModifier(source);
-            tank.modify(wheelBaseW);
+            tank.modify(wheelBaseW, config);
 
             fl = tank.getLeftTrajectory();
             fr = tank.getRightTrajectory();
