@@ -9,3 +9,7 @@
 .idea/**/*
 *.iml
 .gradle
+
+# Eclipse files
+.classpath
+.project
