@@ -44,6 +44,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.util.Callback;
 import javafx.util.converter.DoubleStringConverter;
 
@@ -449,12 +450,14 @@ public class MainUIController
     @FXML
     private void showExportDialog() {
         FileChooser fileChooser = new FileChooser();
+        ExtensionFilter rawCode = new FileChooser.ExtensionFilter("Raw Waypoint/Config Code", "*.txt");
 
         fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
         fileChooser.setTitle("Export");
         fileChooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("Comma Separated Values", "*.csv"),
-                new FileChooser.ExtensionFilter("Binary Trajectory File", "*.traj")
+                new FileChooser.ExtensionFilter("Binary Trajectory File", "*.traj"),
+                rawCode
         );
 
         File result = fileChooser.showSaveDialog(root.getScene().getWindow());
@@ -463,22 +466,23 @@ public class MainUIController
             String parentPath = result.getAbsolutePath(), ext = parentPath.substring(parentPath.lastIndexOf("."));
             parentPath = parentPath.substring(0, parentPath.lastIndexOf(ext));
 
-            String csvTypeStr = properties.getProperty("ui.csvType", "0");
-            int csvType = Integer.parseInt(csvTypeStr);
+            int csvType = Integer.parseInt( properties.getProperty("ui.csvType", "0") );
             
             try {
-            	if(csvType == 0) {
-            		backend.exportTrajectoriesJaci(new File(parentPath), ext);
-            	}
-            	else {
-            		backend.exportTrajectoriesTalon(new File(parentPath), ext);
+            	if( fileChooser.getSelectedExtensionFilter() == rawCode ) {
+            		backend.exportTrajectoriesText(new File(parentPath+ext));            		
+            	} else {
+            		if(csvType == 0) {
+            			backend.exportTrajectoriesJaci(new File(parentPath), ext);
+            		} else {
+            			backend.exportTrajectoriesTalon(new File(parentPath), ext);
+            		}
             	}
             } catch (Pathfinder.GenerationException e) {
                 Alert alert = AlertFactory.createExceptionAlert(e, "Invalid Trajectory!");
 
                 alert.showAndWait();
             } catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
         }
