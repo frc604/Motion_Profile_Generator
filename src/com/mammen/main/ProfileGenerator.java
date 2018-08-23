@@ -79,6 +79,7 @@ public class ProfileGenerator
 	private DriveBase driveBase;
 	private FitMethod fitMethod;
 	private Units units;
+	private boolean reverseDrive;
 
 	private final List<Waypoint> POINTS;
 
@@ -690,7 +691,7 @@ public class ProfileGenerator
 	public void updateTrajectories() throws Pathfinder.GenerationException 
 	{
 		Config config = new Config( fitMethod, Config.SAMPLES_HIGH, timeStep, velocity, acceleration, jerk );
-		source = Pathfinder.generate( POINTS.toArray(new Waypoint[1]), config );
+		source = Pathfinder.generate( POINTS.toArray(new Waypoint[1]), config, reverseDrive );
 		if (driveBase == DriveBase.SWERVE) 
 		{
 			SwerveModifier swerve = new SwerveModifier(source);
@@ -804,6 +805,10 @@ public class ProfileGenerator
 	{
 		this.wheelBaseD = wheelBaseD;
 	}
+
+	public boolean getIsReverseDrive() { return reverseDrive; }
+
+	public void setReverseDrive( boolean isReverseDrive ) { this.reverseDrive = isReverseDrive; }
 
 	public boolean hasWorkingProject() {
 		return workingProject != null;

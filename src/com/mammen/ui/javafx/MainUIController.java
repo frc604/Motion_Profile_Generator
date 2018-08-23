@@ -112,6 +112,9 @@ public class MainUIController
         btnAddPoint,
         btnClearPoints,
         btnDelete;
+    @FXML
+    private CheckBox
+        isReverseDrive;
 
     private ObservableList<Waypoint> waypointsList;
     
@@ -150,6 +153,7 @@ public class MainUIController
         workingDirectory = new File(properties.getProperty("file.workingDir", System.getProperty("user.dir")));
 
         btnDelete.setDisable(true);
+        isReverseDrive.setSelected( false );
 
         choDriveBase.getItems().addAll("Tank", "Swerve");
         choDriveBase.setValue(choDriveBase.getItems().get(0));
@@ -798,6 +802,7 @@ public class MainUIController
         backend.setJerk(Double.parseDouble( txtJerk.getText().trim() ));
         backend.setWheelBaseW(Double.parseDouble( txtWheelBaseW.getText().trim() ));
         backend.setWheelBaseD(Double.parseDouble( txtWheelBaseD.getText().trim() ));
+        backend.setReverseDrive( isReverseDrive.isSelected() );
     }
 
     /**
