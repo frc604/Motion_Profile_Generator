@@ -987,10 +987,11 @@ public class MainUIController
 
         if (waypointsList.size() > 1) {
             XYChart.Series<Double, Double>
+                    centerSeries = SeriesFactory.buildVelocitySeries( backend.getSourceTrajectory() ),
                     flSeries = SeriesFactory.buildVelocitySeries(backend.getFrontLeftTrajectory()),
                     frSeries = SeriesFactory.buildVelocitySeries(backend.getFrontRightTrajectory());
 
-            chtVelocity.getData().addAll(flSeries, frSeries);
+            chtVelocity.getData().addAll(centerSeries, flSeries, frSeries);
 
             if (backend.getDriveBase() == ProfileGenerator.DriveBase.SWERVE) {
                 XYChart.Series<Double, Double>
@@ -1006,6 +1007,7 @@ public class MainUIController
             } 
             else 
             {
+                centerSeries.setName( "Source Trajectory" );
                 flSeries.setName("Left Trajectory");
                 frSeries.setName("Right Trajectory");
             }
