@@ -391,6 +391,8 @@ public class ProfileGenerator
 			}
 			fw.println("};");
 
+			fw.print( "Pathfinder.generate(points,config"+reverseDrive+");" );
+
 		}
 
 
