@@ -112,6 +112,9 @@ public class MainUIController
         btnAddPoint,
         btnClearPoints,
         btnDelete;
+    @FXML
+    private CheckBox
+        isReverseDrive;
 
     private ObservableList<Waypoint> waypointsList;
     
@@ -150,6 +153,7 @@ public class MainUIController
         workingDirectory = new File(properties.getProperty("file.workingDir", System.getProperty("user.dir")));
 
         btnDelete.setDisable(true);
+        isReverseDrive.setSelected( false );
 
         choDriveBase.getItems().addAll("Tank", "Swerve");
         choDriveBase.setValue(choDriveBase.getItems().get(0));
@@ -798,6 +802,7 @@ public class MainUIController
         backend.setJerk(Double.parseDouble( txtJerk.getText().trim() ));
         backend.setWheelBaseW(Double.parseDouble( txtWheelBaseW.getText().trim() ));
         backend.setWheelBaseD(Double.parseDouble( txtWheelBaseD.getText().trim() ));
+        backend.setReverseDrive( isReverseDrive.isSelected() );
     }
 
     /**
@@ -982,10 +987,11 @@ public class MainUIController
 
         if (waypointsList.size() > 1) {
             XYChart.Series<Double, Double>
+                    centerSeries = SeriesFactory.buildVelocitySeries( backend.getSourceTrajectory() ),
                     flSeries = SeriesFactory.buildVelocitySeries(backend.getFrontLeftTrajectory()),
                     frSeries = SeriesFactory.buildVelocitySeries(backend.getFrontRightTrajectory());
 
-            chtVelocity.getData().addAll(flSeries, frSeries);
+            chtVelocity.getData().addAll(centerSeries, flSeries, frSeries);
 
             if (backend.getDriveBase() == ProfileGenerator.DriveBase.SWERVE) {
                 XYChart.Series<Double, Double>
@@ -1001,6 +1007,7 @@ public class MainUIController
             } 
             else 
             {
+                centerSeries.setName( "Source Trajectory" );
                 flSeries.setName("Left Trajectory");
                 frSeries.setName("Right Trajectory");
             }

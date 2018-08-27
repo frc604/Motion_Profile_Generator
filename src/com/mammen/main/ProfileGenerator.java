@@ -79,6 +79,7 @@ public class ProfileGenerator
 	private DriveBase driveBase;
 	private FitMethod fitMethod;
 	private Units units;
+	private boolean reverseDrive;
 
 	private final List<Waypoint> POINTS;
 
@@ -389,6 +390,8 @@ public class ProfileGenerator
 				fw.println(indent+"new Waypoint(" + w.x + "," + w.y + "," + w.angle + "),");
 			}
 			fw.println("};");
+
+			fw.print( "Pathfinder.generate(points,config"+reverseDrive+");" );
 
 		}
 
@@ -702,6 +705,13 @@ public class ProfileGenerator
 			fr = swerve.getFrontRightTrajectory();
 			bl = swerve.getBackLeftTrajectory();
 			br = swerve.getBackRightTrajectory();
+
+			if( getIsReverseDrive() ) {
+				fl = Pathfinder.reverseTrajectory(fl);
+				fr = Pathfinder.reverseTrajectory(fr);
+				bl = Pathfinder.reverseTrajectory(bl);
+				br = Pathfinder.reverseTrajectory(br);
+			}
 		} 
 		else  // By default, treat everything as tank drive.
 		{
@@ -712,6 +722,13 @@ public class ProfileGenerator
 			fr = tank.getRightTrajectory();
 			bl = null;
 			br = null;
+
+			if( getIsReverseDrive() ) {
+				fl = Pathfinder.reverseTrajectory(fl);
+				fr = Pathfinder.reverseTrajectory(fr);
+				System.out.println(fl.segments[0].x);
+				System.out.println(fr.segments[0].x);
+			}
 		}
 	}
 
@@ -804,6 +821,10 @@ public class ProfileGenerator
 	{
 		this.wheelBaseD = wheelBaseD;
 	}
+
+	public boolean getIsReverseDrive() { return reverseDrive; }
+
+	public void setReverseDrive( boolean isReverseDrive ) { this.reverseDrive = isReverseDrive; }
 
 	public boolean hasWorkingProject() {
 		return workingProject != null;
