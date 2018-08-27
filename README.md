@@ -107,6 +107,19 @@ the "File" menu.
 - You will need JDK 8
 - In the project folder run `gradle build`
 - The JAR artifact will be created in the build folder
+
+### Pathfinder Modification
+If you wish to change how pathfinder works, and want to see the results within the Motion Profiler, there are a few files to copy.
+First, apply the patch file provided: `Pathfinder_modify.patch`.
+This disables the loading of native files, because the Motion Profiler takes care of that.
+The files to copy are:
+```
+Pathfinder-Java/build/libs/pathfinderjava/shared/any64/libpathfinderjava.so -> lib/native_utils/pathfinderjava.so
+Pathfinder-Java/build/libs/Pathfinder-Java-1.8.jar
+Pathfinder-Java/build/libs/Pathfinder-Java-1.8-javadoc.jar
+Pathfinder-Java/build/libs/Pathfinder-Java-1.8-sources.jar
+
+```
 		
 ## Acknowledgments
 
