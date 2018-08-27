@@ -693,7 +693,7 @@ public class ProfileGenerator
 	public void updateTrajectories() throws Pathfinder.GenerationException 
 	{
 		Config config = new Config( fitMethod, Config.SAMPLES_HIGH, timeStep, velocity, acceleration, jerk );
-		source = Pathfinder.generate( POINTS.toArray(new Waypoint[1]), config, reverseDrive );
+		source = Pathfinder.generate( POINTS.toArray(new Waypoint[1]), config );
 		if (driveBase == DriveBase.SWERVE) 
 		{
 			SwerveModifier swerve = new SwerveModifier(source);
@@ -705,6 +705,13 @@ public class ProfileGenerator
 			fr = swerve.getFrontRightTrajectory();
 			bl = swerve.getBackLeftTrajectory();
 			br = swerve.getBackRightTrajectory();
+
+			if( getIsReverseDrive() ) {
+				fl = Pathfinder.reverseTrajectory(fl);
+				fr = Pathfinder.reverseTrajectory(fr);
+				bl = Pathfinder.reverseTrajectory(bl);
+				br = Pathfinder.reverseTrajectory(br);
+			}
 		} 
 		else  // By default, treat everything as tank drive.
 		{
@@ -715,6 +722,13 @@ public class ProfileGenerator
 			fr = tank.getRightTrajectory();
 			bl = null;
 			br = null;
+
+			if( getIsReverseDrive() ) {
+				fl = Pathfinder.reverseTrajectory(fl);
+				fr = Pathfinder.reverseTrajectory(fr);
+				System.out.println(fl.segments[0].x);
+				System.out.println(fr.segments[0].x);
+			}
 		}
 	}
 
