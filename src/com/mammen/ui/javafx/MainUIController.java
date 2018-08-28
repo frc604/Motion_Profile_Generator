@@ -47,6 +47,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.util.Callback;
 import javafx.util.converter.DoubleStringConverter;
+import javafx.util.converter.IntegerStringConverter;
 
 import static com.mammen.util.Mathf.round;
 
@@ -89,7 +90,8 @@ public class MainUIController
     private TableColumn<Waypoint, Double>
         colWaypointX,
         colWaypointY,
-        colWaypointAngle;
+        colWaypointAngle,
+            colWaypointIndex;
     
     @FXML
     private MenuItem
@@ -127,7 +129,7 @@ public class MainUIController
     {
         backend = new ProfileGenerator();
         properties = PropWrapper.getProperties();
-        
+
         try {
 			
 			if (OSValidator.isWindows()) {
@@ -176,6 +178,15 @@ public class MainUIController
                 return cell;
         };
 
+        Callback<TableColumn<Waypoint, Integer>, TableCell<Waypoint, Integer>> integerCallback =
+                (TableColumn<Waypoint, Integer> param) -> {
+                    TextFieldTableCell<Waypoint, Integer> cell = new TextFieldTableCell<>();
+
+                    cell.setConverter(new IntegerStringConverter());
+
+                    return cell;
+                };
+
         EventHandler<TableColumn.CellEditEvent<Waypoint, Double>> editHandler =
             (TableColumn.CellEditEvent<Waypoint, Double> t) -> {
                 Waypoint curWaypoint = t.getRowValue();
@@ -184,8 +195,14 @@ public class MainUIController
                     curWaypoint.angle = Pathfinder.d2r(t.getNewValue());
                 else if (t.getTableColumn() == colWaypointY)
                     curWaypoint.y = t.getNewValue();
-                else
+                else if( t.getTableColumn() == colWaypointX )
                     curWaypoint.x = t.getNewValue();
+                else if( t.getTableColumn() == colWaypointIndex) {
+                    // Reorder waypoints
+                    backend.removePoint( backend.getIndex(curWaypoint) );
+                    backend.addPoint( curWaypoint.x, curWaypoint.y, curWaypoint.angle, t.getNewValue().intValue() );
+                }
+
 
                 generateTrajectories();
         };
@@ -344,10 +361,12 @@ public class MainUIController
         colWaypointX.setCellFactory(doubleCallback);
         colWaypointY.setCellFactory(doubleCallback);
         colWaypointAngle.setCellFactory(doubleCallback);
+        colWaypointIndex.setCellFactory(doubleCallback);
 
         colWaypointX.setOnEditCommit(editHandler);
         colWaypointY.setOnEditCommit(editHandler);
         colWaypointAngle.setOnEditCommit(editHandler);
+        colWaypointIndex.setOnEditCommit(editHandler);
 
         colWaypointX.setCellValueFactory((TableColumn.CellDataFeatures<Waypoint, Double> d) -> new ObservableValueBase<Double>()
         {
@@ -372,6 +391,16 @@ public class MainUIController
             public Double getValue()
             {
                 return round(Pathfinder.r2d(d.getValue().angle), 2);
+            }
+        });
+
+
+        colWaypointIndex.setCellValueFactory((TableColumn.CellDataFeatures<Waypoint, Double> d) -> new ObservableValueBase<Double>()
+        {
+            @Override
+            public Double getValue()
+            {
+                return (double) backend.getIndex( d.getValue() );
             }
         });
 

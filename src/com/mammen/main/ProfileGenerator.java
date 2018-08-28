@@ -668,6 +668,14 @@ public class ProfileGenerator
 		POINTS.remove(index);
 	}
 
+	public void addPoint( double x, double y, double angle, int index ) {
+		POINTS.add( index, new Waypoint( x, y, angle ) );
+	}
+
+	public int getIndex( Waypoint waypoint ) {
+		return POINTS.indexOf( waypoint );
+	}
+
 	public int getNumWaypoints()
 	{
 		return POINTS.size();
