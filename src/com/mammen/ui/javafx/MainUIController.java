@@ -358,6 +358,11 @@ public class MainUIController
             }
         });
         
+        isReverseDrive.selectedProperty().addListener((observable, oldValue, newValue) ->
+        {
+            generateTrajectories();
+        });
+        
         colWaypointX.setCellFactory(doubleCallback);
         colWaypointY.setCellFactory(doubleCallback);
         colWaypointAngle.setCellFactory(doubleCallback);
